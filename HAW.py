@@ -36,7 +36,7 @@ if selection == "Accueil---Observation":
     st.image("HAW-logo.png", width=300)
     st.write("""
     # Bienvenue sur Human Aid Watch (HAW)
-    Surveillance et suivi de la distribution de l'aide humanitaire.
+    🌍Suivi transparent de la distribution de l'aide humanitaire.
     """)
 # Formulaire d'observation
     st.subheader("Ajouter une observation --------------- ملاحظة")
