@@ -28,18 +28,19 @@ create_tables()
 
 # Navigation
 st.sidebar.title("Navigation")
-selection = st.sidebar.radio("Aller à", ["Accueil", "Actualités", "Espace Membres", "Observations", "Chatbot"])
+selection = st.sidebar.radio("Aller à", ["Accueil", "Actualités", "Espace Membres", "Chatbot"])
 
-# Nouvelle section pour les observations
-if selection == "Observations":
-    
+# Page d'Accueil
+if selection == "Accueil":
+    st.title("Accueil")
     st.image("HAW-logo.png", width=300)
     st.write("""
     # Bienvenue sur Human Aid Watch (HAW)
-    Surveillance et suivi de la distribution de l'aide humanitaire.""")
-    st.title("Observations")
+    Surveillance et suivi de la distribution de l'aide humanitaire.
+    """)
 
     # Formulaire d'observation
+    st.subheader("Soumettre une nouvelle observation")
     location = st.text_input("Lieu de l'observation")
     geo_location = st.text_input("Géolocalisation (latitude, longitude)")
     type_of_aid = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
@@ -67,18 +68,18 @@ if selection == "Observations":
         conn.commit()
         st.write("Observation soumise avec succès.")
 
-
-# Page d'Accueil
-elif selection == "Accueil":
-    st.title("Accueil")
-    st.image("HAW-logo.png", width=300)
-    st.write("""
-    # Bienvenue sur Human Aid Watch (HAW)
-    Surveillance et suivi de la distribution de l'aide humanitaire.
-    Les victimes sont nos observateurs. Ils deviennent acteurs de leur reconstruction. 
-    Avec leurs observations, nous pouvons savoir quelles sont les aides qui leur parviennent effectivement. 
-    """)
-
+    # Afficher les dernières observations
+    st.subheader("Dernières observations")
+    latest_observations = pd.read_sql_query('SELECT * FROM observations ORDER BY date DESC LIMIT 5', conn)
+    for i, row in latest_observations.iterrows():
+        st.markdown(f"---")
+        st.write(f"Observateur: {row['observer']}")
+        st.write(f"Lieu: {row['location']}")
+        st.write(f"Type d'aide: {row['type_of_aid']}")
+        st.write(f"Nombre de bénéficiaires: {row['number_of_beneficiaries']}")
+        st.write(f"Montant de l'aide: {row['aid_amount']}")
+        st.write(f"Commentaires: {row['comments']}")
+        st.write(f"Date: {row['date']}")
 
 # Page d'Actualités
 elif selection == "Actualités":
@@ -97,7 +98,6 @@ elif selection == "Actualités":
         for _, comment_row in comments.iterrows():
             st.markdown(f"--- *{comment_row['comment']}*")
             st.markdown(f"Écrit par **{comment_row['author']}** le {comment_row['date']}")
-
 
         # Ajouter un commentaire (si connecté)
         if st.session_state['is_user_logged_in']:
@@ -147,31 +147,6 @@ elif selection == "Espace Membres":
             st.write("Vous avez été déconnecté.")
             st.experimental_rerun()
 
-
-        # Ajouter des documents
-        uploaded_file = st.file_uploader("Choisissez un fichier à uploader", type=["pdf", "docx", "txt"])
-        if uploaded_file:
-            c.execute("INSERT INTO documents (name, file) VALUES (?, ?)", (uploaded_file.name, uploaded_file.read()))
-            conn.commit()
-            st.write("Document uploadé avec succès.")
-
-        # Écrire des textes dans l'actualité
-        new_title = st.text_input("Titre de l'actualité:")
-        new_content = st.text_area("Contenu de l'actualité:")
-        if st.button("Publier"):
-            c.execute("INSERT INTO articles (title, content) VALUES (?, ?)", (new_title, new_content))
-            conn.commit()
-            st.write("Actualité publiée avec succès.")
-
-        # Regarder les documents privés de Human Aid Watch
-        st.write("Documents privés de Human Aid Watch")
-        documents = pd.read_sql_query('SELECT name FROM documents', conn)
-        for i, row in documents.iterrows():
-            st.write(row['name'])
-
-
-
-
 # Page Chatbot
 elif selection == "Chatbot":
     st.title("Chatbot")
@@ -179,3 +154,4 @@ elif selection == "Chatbot":
     user_input = st.text_input("Votre question")
     if user_input:
         st.write("Réponse du chatbot ici.")
+
