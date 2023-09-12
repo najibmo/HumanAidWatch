@@ -149,9 +149,9 @@ elif selection == "Espace Membres":
 
 # Page Chatbot
 elif selection == "Chatbot":
-    st.title("Chatbot")
+    st.title("Assistant")
     st.write("Posez vos questions ici.")
     user_input = st.text_input("Votre question")
     if user_input:
-        st.write("Réponse du chatbot ici.")
+        st.write("Réponse de l'assistant.")
 
