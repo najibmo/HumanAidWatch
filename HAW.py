@@ -40,7 +40,7 @@ if selection == "Accueil--- Observation":
     ## 🌍Suivi transparent de la distribution de l'aide humanitaire.
     """)
     
-    st.markdown("🛠️ L'application est actuellement en phase de développement. Si vous souhaitez contribuer à son amélioration, rejoignez-nous sur notre dépôt GitHub : [GitHub Repository](https://github.com/najibmo/HumanAidWatch.git).")
+    st.markdown("🛠️ 🛠️🛠️L'application est actuellement en phase de développement. Si vous souhaitez contribuer à son amélioration, rejoignez-nous sur notre dépôt GitHub : [GitHub Repository](https://github.com/najibmo/HumanAidWatch.git).")
 
     
 # Formulaire d'observation
