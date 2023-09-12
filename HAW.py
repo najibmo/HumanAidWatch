@@ -39,6 +39,10 @@ if selection == "Accueil--- Observation":
     st.write("""
     ## 🌍Suivi transparent de la distribution de l'aide humanitaire.
     """)
+    
+    st.markdown("🛠️ L'application est actuellement en phase de développement. Si vous souhaitez contribuer à son amélioration, rejoignez-nous sur notre dépôt GitHub : [GitHub Repository](https://github.com/najibmo/HumanAidWatch.git).")
+
+    
 # Formulaire d'observation
     st.subheader("Ajouter une observation --------------- ملاحظة")
     location = st.text_input("Lieu de l'observation --------------- موقع الملاحظة")
