@@ -2,30 +2,27 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import bcrypt
-
 from datetime import datetime
 
 # Initialisation de la base de données
 conn = sqlite3.connect('data.db')
 c = conn.cursor()
 
+# Initialisation de l'état de la session
 if 'is_user_logged_in' not in st.session_state:
     st.session_state['is_user_logged_in'] = False
 
 if 'current_user' not in st.session_state:
     st.session_state['current_user'] = None
 
+# Création des tables
 def create_tables():
     c.execute('CREATE TABLE IF NOT EXISTS articles(title TEXT, content TEXT)')
-    #c.execute('DROP TABLE IF EXISTS comments')  # Supprime la table si elle existe
     c.execute('CREATE TABLE IF NOT EXISTS comments(article_title TEXT, comment TEXT, author TEXT, date TEXT)')
-    c.execute('CREATE TABLE IF NOT EXISTS members(username TEXT, password TEXT)')
-    c.execute('CREATE TABLE IF NOT EXISTS documents(name TEXT, file BLOB)')
     c.execute('CREATE TABLE IF NOT EXISTS members(username TEXT UNIQUE, password TEXT)')
-    c.execute('CREATE TABLE IF NOT EXISTS observations(observer TEXT, location TEXT, geo_location TEXT, type_of_aid TEXT, number_of_beneficiaries INTEGER, aid_amount REAL, comments TEXT, file_data BLOB, file_type TEXT, date TEXT)')
-    c.execute('ALTER TABLE observations ADD COLUMN IF NOT EXISTS is_member TEXT')
+    c.execute('CREATE TABLE IF NOT EXISTS documents(name TEXT, file BLOB)')
+    c.execute('CREATE TABLE IF NOT EXISTS observations(observer TEXT, is_member TEXT, location TEXT, geo_location TEXT, type_of_aid TEXT, number_of_beneficiaries INTEGER, aid_amount REAL, comments TEXT, file_data BLOB, file_type TEXT, date TEXT)')
     conn.commit()
-   
 
 create_tables()
 
@@ -34,7 +31,6 @@ st.sidebar.title("Navigation")
 selection = st.sidebar.radio("Aller à", ["Accueil", "Actualités", "Espace Membres", "Observations", "Chatbot"])
 
 # Page d'Accueil
-
 if selection == "Accueil":
     st.title("Accueil")
     st.image("HAW-logo.png", width=300)
@@ -44,6 +40,7 @@ if selection == "Accueil":
     Les victimes sont nos observateurs. Ils deviennent acteurs de leur reconstruction. 
     Avec leurs observations, nous pouvons savoir quelles sont les aides qui leur parviennent effectivement. 
     """)
+
 
 # Page d'Actualités
 elif selection == "Actualités":
@@ -134,34 +131,6 @@ elif selection == "Espace Membres":
         for i, row in documents.iterrows():
             st.write(row['name'])
 
-# Nouvelle section pour les observations
-elif selection == "Observations":
-    st.title("Observations")
-
-    if st.session_state['is_user_logged_in']:
-        location = st.text_input("Lieu de l'observation")
-        geo_location = st.text_input("Géolocalisation (latitude, longitude)")
-        type_of_aid = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
-        number_of_beneficiaries = st.number_input("Nombre de bénéficiaires", min_value=1)
-        aid_amount = st.number_input("Estimation du montant de l'aide reçue (en dirham)", min_value=0.0, step=0.01)
-        comments = st.text_area("Commentaires")
-
-        uploaded_file = st.file_uploader("Choisissez une vidéo ou une photo à uploader", type=["mp4", "avi", "mov", "jpg", "png"])
-        file_data = None
-        file_type = None
-        if uploaded_file:
-            file_data = uploaded_file.read()
-            file_type = uploaded_file.type
-
-        if st.button("Soumettre l'observation"):
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            c.execute("INSERT INTO observations (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, current_time))
-
-            conn.commit()
-            st.write("Observation soumise avec succès.")
-    else:
-        st.write("Vous devez être connecté pour soumettre une observation.")
 
 # Nouvelle section pour les observations
 elif selection == "Observations":
@@ -194,6 +163,8 @@ elif selection == "Observations":
                   (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, current_time))
         conn.commit()
         st.write("Observation soumise avec succès.")
+
+
 
 # Page Chatbot
 elif selection == "Chatbot":
