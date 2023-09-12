@@ -28,14 +28,16 @@ create_tables()
 
 # Navigation
 st.sidebar.title("Navigation")
-selection = st.sidebar.radio("Aller à", ["Accueil---Observation", "Actualités", "Espace Membres", "Chatbot"])
+selection = st.sidebar.radio("Aller à", ["Accueil--- Observation", "Actualités", "Espace Membres", "Chatbot"])
 
 # Page d'Accueil
-if selection == "Accueil---Observation":
+if selection == "Accueil--- Observation":
     st.title("Accueil---Observation")
     st.image("HAW-logo.png", width=300)
     st.write("""
-    # Bienvenue sur Human Aid Watch (HAW)./n 🌍Suivi transparent de la distribution de l'aide humanitaire.
+    # Bienvenue sur Human Aid Watch (HAW)""")
+    st.write("""
+    ## 🌍Suivi transparent de la distribution de l'aide humanitaire.
     """)
 # Formulaire d'observation
     st.subheader("Ajouter une observation --------------- ملاحظة")
