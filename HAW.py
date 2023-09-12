@@ -45,7 +45,7 @@ if selection == "Accueil":
     type_of_aid = st.selectbox("Type d'aide --------------- نوع المساعدة", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
     number_of_beneficiaries = st.number_input("Nombre de bénéficiaires --------------- عدد المستفدين", min_value=1)
     aid_amount = st.number_input("Estimation du montant de l'aide reçue (en dirham) --------------- قيمة المساعدة", min_value=0.0, step=0.01)
-    comments = st.text_area("Commentaires --------------- تعليق")
+    comments = st.text_area("Commentaire --------------- تعليق")
 
 
     uploaded_file = st.file_uploader("Choisissez une vidéo ou une photo à uploader", type=["mp4", "avi", "mov", "jpg", "png"])
