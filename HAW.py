@@ -23,6 +23,7 @@ def create_tables():
     c.execute('CREATE TABLE IF NOT EXISTS documents(name TEXT, file BLOB)')
     c.execute('CREATE TABLE IF NOT EXISTS members(username TEXT UNIQUE, password TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS observations(observer TEXT, location TEXT, geo_location TEXT, type_of_aid TEXT, number_of_beneficiaries INTEGER, aid_amount REAL, comments TEXT, file_data BLOB, file_type TEXT, date TEXT)')
+    c.execute('ALTER TABLE observations ADD COLUMN IF NOT EXISTS is_member TEXT')
     conn.commit()
    
 
@@ -154,14 +155,45 @@ elif selection == "Observations":
 
         if st.button("Soumettre l'observation"):
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            c.execute("INSERT INTO observations (observer, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                      (st.session_state['current_user'], location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, current_time))
+            c.execute("INSERT INTO observations (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, current_time))
+
             conn.commit()
             st.write("Observation soumise avec succès.")
     else:
         st.write("Vous devez être connecté pour soumettre une observation.")
 
+# Nouvelle section pour les observations
+elif selection == "Observations":
+    st.title("Observations")
 
+    # Formulaire d'observation
+    location = st.text_input("Lieu de l'observation")
+    geo_location = st.text_input("Géolocalisation (latitude, longitude)")
+    type_of_aid = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
+    number_of_beneficiaries = st.number_input("Nombre de bénéficiaires", min_value=1)
+    aid_amount = st.number_input("Estimation du montant de l'aide reçue (en dirham)", min_value=0.0, step=0.01)
+    comments = st.text_area("Commentaires")
+
+    uploaded_file = st.file_uploader("Choisissez une vidéo ou une photo à uploader", type=["mp4", "avi", "mov", "jpg", "png"])
+    file_data = None
+    file_type = None
+    if uploaded_file:
+        file_data = uploaded_file.read()
+        file_type = uploaded_file.type
+
+    observer = "Anonyme"
+    is_member = "Non"
+    if st.session_state['is_user_logged_in']:
+        observer = st.session_state['current_user']
+        is_member = "Oui"
+
+    if st.button("Soumettre l'observation"):
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        c.execute("INSERT INTO observations (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                  (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, current_time))
+        conn.commit()
+        st.write("Observation soumise avec succès.")
 
 # Page Chatbot
 elif selection == "Chatbot":
