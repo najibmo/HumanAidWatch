@@ -39,7 +39,7 @@ if selection == "Accueil":
     Surveillance et suivi de la distribution de l'aide humanitaire.
     """)
 # Formulaire d'observation
-    st.subheader("Soumettre une nouvelle observation ---------------  ملاحظات")
+    st.subheader("Ajouter une observation --------------- ملاحظة")
     location = st.text_input("Lieu de l'observation --------------- موقع الملاحظة")
     geo_location = st.text_input("Géolocalisation (latitude, longitude) --------------- الموقع الجغرافي")
     type_of_aid = st.selectbox("Type d'aide --------------- نوع المساعدة", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
