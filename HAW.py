@@ -30,6 +30,44 @@ create_tables()
 st.sidebar.title("Navigation")
 selection = st.sidebar.radio("Aller à", ["Accueil", "Actualités", "Espace Membres", "Observations", "Chatbot"])
 
+# Nouvelle section pour les observations
+elif selection == "Observations":
+    
+    st.image("HAW-logo.png", width=300)
+    st.write("""
+    # Bienvenue sur Human Aid Watch (HAW)
+    Surveillance et suivi de la distribution de l'aide humanitaire.""")
+    st.title("Observations")
+
+    # Formulaire d'observation
+    location = st.text_input("Lieu de l'observation")
+    geo_location = st.text_input("Géolocalisation (latitude, longitude)")
+    type_of_aid = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
+    number_of_beneficiaries = st.number_input("Nombre de bénéficiaires", min_value=1)
+    aid_amount = st.number_input("Estimation du montant de l'aide reçue (en dirham)", min_value=0.0, step=0.01)
+    comments = st.text_area("Commentaires")
+
+    uploaded_file = st.file_uploader("Choisissez une vidéo ou une photo à uploader", type=["mp4", "avi", "mov", "jpg", "png"])
+    file_data = None
+    file_type = None
+    if uploaded_file:
+        file_data = uploaded_file.read()
+        file_type = uploaded_file.type
+
+    observer = "Anonyme"
+    is_member = "Non"
+    if st.session_state['is_user_logged_in']:
+        observer = st.session_state['current_user']
+        is_member = "Oui"
+
+    if st.button("Soumettre l'observation"):
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        c.execute("INSERT INTO observations (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                  (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, current_time))
+        conn.commit()
+        st.write("Observation soumise avec succès.")
+
+
 # Page d'Accueil
 if selection == "Accueil":
     st.title("Accueil")
@@ -125,44 +163,12 @@ elif selection == "Espace Membres":
             conn.commit()
             st.write("Actualité publiée avec succès.")
 
-        # Regarder les documents privés de l'ASL
-        st.write("Documents privés de l'ASL")
+        # Regarder les documents privés de Human Aid Watch
+        st.write("Documents privés de Human Aid Watch")
         documents = pd.read_sql_query('SELECT name FROM documents', conn)
         for i, row in documents.iterrows():
             st.write(row['name'])
 
-
-# Nouvelle section pour les observations
-elif selection == "Observations":
-    st.title("Observations")
-
-    # Formulaire d'observation
-    location = st.text_input("Lieu de l'observation")
-    geo_location = st.text_input("Géolocalisation (latitude, longitude)")
-    type_of_aid = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
-    number_of_beneficiaries = st.number_input("Nombre de bénéficiaires", min_value=1)
-    aid_amount = st.number_input("Estimation du montant de l'aide reçue (en dirham)", min_value=0.0, step=0.01)
-    comments = st.text_area("Commentaires")
-
-    uploaded_file = st.file_uploader("Choisissez une vidéo ou une photo à uploader", type=["mp4", "avi", "mov", "jpg", "png"])
-    file_data = None
-    file_type = None
-    if uploaded_file:
-        file_data = uploaded_file.read()
-        file_type = uploaded_file.type
-
-    observer = "Anonyme"
-    is_member = "Non"
-    if st.session_state['is_user_logged_in']:
-        observer = st.session_state['current_user']
-        is_member = "Oui"
-
-    if st.button("Soumettre l'observation"):
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        c.execute("INSERT INTO observations (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                  (observer, is_member, location, geo_location, type_of_aid, number_of_beneficiaries, aid_amount, comments, file_data, file_type, current_time))
-        conn.commit()
-        st.write("Observation soumise avec succès.")
 
 
 
