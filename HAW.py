@@ -31,7 +31,7 @@ st.sidebar.title("Navigation")
 selection = st.sidebar.radio("Aller à", ["Accueil", "Actualités", "Espace Membres", "Observations", "Chatbot"])
 
 # Nouvelle section pour les observations
-elif selection == "Observations":
+if selection == "Observations":
     
     st.image("HAW-logo.png", width=300)
     st.write("""
@@ -69,7 +69,7 @@ elif selection == "Observations":
 
 
 # Page d'Accueil
-if selection == "Accueil":
+elif selection == "Accueil":
     st.title("Accueil")
     st.image("HAW-logo.png", width=300)
     st.write("""
