@@ -40,7 +40,7 @@ if selection == "Accueil":
     """)
 
     # Formulaire d'observation
-    st.subheader("Soumettre une nouvelle observation" "ملاحظات ")
+    st.subheader("Soumettre une nouvelle observation ----  " "ملاحظات ")
     location = st.text_input("Lieu de l'observation")
     geo_location = st.text_input("Géolocalisation (latitude, longitude)")
     type_of_aid = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
