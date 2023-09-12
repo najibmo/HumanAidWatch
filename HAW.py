@@ -32,7 +32,7 @@ selection = st.sidebar.radio("Aller à", ["Accueil--- Observation", "Actualités
 
 # Page d'Accueil
 if selection == "Accueil--- Observation":
-    st.title("Accueil---Observation")
+    st.title("Accueil--- Observation")
     st.image("HAW-logo.png", width=300)
     st.write("""
     # Bienvenue sur Human Aid Watch (HAW)""")
