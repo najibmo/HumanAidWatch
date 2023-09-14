@@ -22,6 +22,7 @@ def create_tables():
     c.execute('CREATE TABLE IF NOT EXISTS members(username TEXT UNIQUE, password TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS documents(name TEXT, file BLOB)')
     c.execute('CREATE TABLE IF NOT EXISTS observations(observer TEXT, is_member TEXT, location TEXT, geo_location TEXT, type_of_aid TEXT, number_of_beneficiaries INTEGER, aid_amount REAL, comments TEXT, file_data BLOB, file_type TEXT, date TEXT)')
+    c.execute('CREATE TABLE IF NOT EXISTS contributions(contributor_type TEXT, organization_name TEXT, estimated_aid_amount REAL, target_beneficiaries INTEGER)')
     c.execute('CREATE TABLE IF NOT EXISTS contributors(contributor TEXT, location TEXT, date TEXT, aid_type TEXT, details TEXT)')
     conn.commit()
 
@@ -50,10 +51,17 @@ if selection == "Accueil--- Observation":
     
     # Demander si le contributeur est un particulier ou une organisation
     contributor_type = st.selectbox("Êtes-vous un particulier ou une organisation?", ["Particulier", "Organisation"])
-    
+    organization_name = ""
     # Si c'est une organisation, demander le nom de l'organisation
     if contributor_type == "Organisation":
         organization_name = st.text_input("Nom de l'organisation")
+
+    
+    # Demander le montant estimé de l'aide
+    estimated_aid_amount = st.number_input("Montant estimé de l'aide (en dirham)", min_value=0.0, step=10)
+    
+    # Demander le nombre de bénéficiaires cibles
+    target_beneficiaries = st.number_input("Nombre de bénéficiaires cibles", min_value=1)
 
     location = st.text_input("Lieu de l'intervention")
     date = st.date_input("Date de l'intervention")
@@ -65,9 +73,10 @@ if selection == "Accueil--- Observation":
         contributor = st.session_state['current_user']
 
     # Bouton pour soumettre l'information
+   
     if st.button("Planifier l'aide"):
-        c.execute("INSERT INTO contributors (contributor, location, date, aid_type, details) VALUES (?, ?, ?, ?, ?)",
-                  (contributor, location, date, aid_type, details))
+        c.execute("INSERT INTO contributors (contributor, location, date, aid_type, details, estimated_aid_amount, target_beneficiaries) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                  (contributor, location, date, aid_type, details, estimated_aid_amount, target_beneficiaries))
         conn.commit()
         st.success("Votre intervention a été planifiée.")
         
