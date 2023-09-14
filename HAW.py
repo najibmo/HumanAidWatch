@@ -47,6 +47,14 @@ if selection == "Accueil--- Observation":
     st.subheader("Planifier une nouvelle aide")
     
     # Collecter les informations sur l'aide prévue
+    
+    # Demander si le contributeur est un particulier ou une organisation
+    contributor_type = st.selectbox("Êtes-vous un particulier ou une organisation?", ["Particulier", "Organisation"])
+    
+    # Si c'est une organisation, demander le nom de l'organisation
+    if contributor_type == "Organisation":
+        organization_name = st.text_input("Nom de l'organisation")
+
     location = st.text_input("Lieu de l'intervention")
     date = st.date_input("Date de l'intervention")
     aid_type = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
