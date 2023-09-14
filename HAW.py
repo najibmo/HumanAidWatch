@@ -47,22 +47,24 @@ if selection == "Accueil--- Observation":
     # Nouvelle section pour les contributeurs
     st.subheader("Planifier une nouvelle aide")
     
+   
+
     # Collecter les informations sur l'aide prévue
     
     # Demander si le contributeur est un particulier ou une organisation
     contributor_type = st.selectbox("Êtes-vous un particulier ou une organisation?", ["Particulier", "Organisation"])
-    organization_name = ""
+    
     # Si c'est une organisation, demander le nom de l'organisation
+    organization_name = ""
     if contributor_type == "Organisation":
         organization_name = st.text_input("Nom de l'organisation")
-
     
     # Demander le montant estimé de l'aide
-    estimated_aid_amount = st.number_input("Montant estimé de l'aide (en dirham)", min_value=0.0, step=10)
+    estimated_aid_amount = st.number_input("Montant estimé de l'aide (en dirham)", min_value=0.0, step=0.01)
     
     # Demander le nombre de bénéficiaires cibles
     target_beneficiaries = st.number_input("Nombre de bénéficiaires cibles", min_value=1)
-
+    
     location = st.text_input("Lieu de l'intervention")
     date = st.date_input("Date de l'intervention")
     aid_type = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
@@ -71,14 +73,14 @@ if selection == "Accueil--- Observation":
     contributor = "Anonyme"
     if st.session_state['is_user_logged_in']:
         contributor = st.session_state['current_user']
-
+    
     # Bouton pour soumettre l'information
-   
     if st.button("Planifier l'aide"):
-        c.execute("INSERT INTO contributors (contributor, location, date, aid_type, details, estimated_aid_amount, target_beneficiaries) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                  (contributor, location, date, aid_type, details, estimated_aid_amount, target_beneficiaries))
+        c.execute("INSERT INTO contributors (contributor, contributor_type, organization_name, estimated_aid_amount, target_beneficiaries, location, date, aid_type, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                  (contributor, contributor_type, organization_name, estimated_aid_amount, target_beneficiaries, location, date, aid_type, details))
         conn.commit()
         st.success("Votre intervention a été planifiée.")
+
         
 # Formulaire d'observation
     st.subheader("Ajouter une observation --------------- ملاحظة")
