@@ -43,7 +43,26 @@ if selection == "Accueil--- Observation":
     
     st.markdown("🛠️ 🛠️🛠️L'application est actuellement en phase de développement. Si vous souhaitez contribuer à son amélioration, rejoignez-nous sur notre dépôt GitHub : [GitHub Repository](https://github.com/najibmo/HumanAidWatch.git).")
 
+    # Nouvelle section pour les contributeurs
+    st.subheader("Planifier une nouvelle aide")
     
+    # Collecter les informations sur l'aide prévue
+    location = st.text_input("Lieu de l'intervention")
+    date = st.date_input("Date de l'intervention")
+    aid_type = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
+    details = st.text_area("Détails de l'intervention")
+    
+    contributor = "Anonyme"
+    if st.session_state['is_user_logged_in']:
+        contributor = st.session_state['current_user']
+
+    # Bouton pour soumettre l'information
+    if st.button("Planifier l'aide"):
+        c.execute("INSERT INTO contributors (contributor, location, date, aid_type, details) VALUES (?, ?, ?, ?, ?)",
+                  (contributor, location, date, aid_type, details))
+        conn.commit()
+        st.success("Votre intervention a été planifiée.")
+        
 # Formulaire d'observation
     st.subheader("Ajouter une observation --------------- ملاحظة")
     location = st.text_input("Lieu de l'observation --------------- موقع الملاحظة")
@@ -152,25 +171,7 @@ elif selection == "Espace Membres":
             st.session_state['current_user'] = None
             st.write("Vous avez été déconnecté.")
             st.experimental_rerun()
-# Nouvelle section pour les contributeurs
-    st.subheader("Planifier une nouvelle aide")
-    
-    # Collecter les informations sur l'aide prévue
-    location = st.text_input("Lieu de l'intervention")
-    date = st.date_input("Date de l'intervention")
-    aid_type = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
-    details = st.text_area("Détails de l'intervention")
-    
-    contributor = "Anonyme"
-    if st.session_state['is_user_logged_in']:
-        contributor = st.session_state['current_user']
 
-    # Bouton pour soumettre l'information
-    if st.button("Planifier l'aide"):
-        c.execute("INSERT INTO contributors (contributor, location, date, aid_type, details) VALUES (?, ?, ?, ?, ?)",
-                  (contributor, location, date, aid_type, details))
-        conn.commit()
-        st.success("Votre intervention a été planifiée.")
 
 # Page Chatbot
 elif selection == "Chatbot":
