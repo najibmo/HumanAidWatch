@@ -22,6 +22,7 @@ def create_tables():
     c.execute('CREATE TABLE IF NOT EXISTS members(username TEXT UNIQUE, password TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS documents(name TEXT, file BLOB)')
     c.execute('CREATE TABLE IF NOT EXISTS observations(observer TEXT, is_member TEXT, location TEXT, geo_location TEXT, type_of_aid TEXT, number_of_beneficiaries INTEGER, aid_amount REAL, comments TEXT, file_data BLOB, file_type TEXT, date TEXT)')
+    c.execute('CREATE TABLE IF NOT EXISTS contributors(contributor TEXT, location TEXT, date TEXT, aid_type TEXT, details TEXT)')
     conn.commit()
 
 create_tables()
@@ -151,6 +152,25 @@ elif selection == "Espace Membres":
             st.session_state['current_user'] = None
             st.write("Vous avez été déconnecté.")
             st.experimental_rerun()
+# Nouvelle section pour les contributeurs
+    st.subheader("Planifier une nouvelle aide")
+    
+    # Collecter les informations sur l'aide prévue
+    location = st.text_input("Lieu de l'intervention")
+    date = st.date_input("Date de l'intervention")
+    aid_type = st.selectbox("Type d'aide", ["Nourriture", "Médicaments", "Vêtements", "Argent", "Travaux", "Autre"])
+    details = st.text_area("Détails de l'intervention")
+    
+    contributor = "Anonyme"
+    if st.session_state['is_user_logged_in']:
+        contributor = st.session_state['current_user']
+
+    # Bouton pour soumettre l'information
+    if st.button("Planifier l'aide"):
+        c.execute("INSERT INTO contributors (contributor, location, date, aid_type, details) VALUES (?, ?, ?, ?, ?)",
+                  (contributor, location, date, aid_type, details))
+        conn.commit()
+        st.success("Votre intervention a été planifiée.")
 
 # Page Chatbot
 elif selection == "Chatbot":
